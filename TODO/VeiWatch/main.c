@@ -47,6 +47,14 @@ struct Data{
 
 #define contrast 50
 
+
+/* comentarios codigo novo
+pesquisar sobre concatenar string recebida na serial, pesquisar como criar as interrupcoes para os botoes do menu,
+ fim comentarios */
+
+
+
+
 void lcdDisplayMain(){
 	/* Inicialização do Relógio do Sistema	*/
 	char	Nokia_Temp[10],Nokia_BPM[10],INFO[]={"INFORMACOES OU ALGO DO TIPO"};
@@ -63,29 +71,33 @@ void lcdDisplayMain(){
 	printf("Temp:%.1f\n",Sensors.Temp);
 	printf("BPM:%d\n",Sensors.BPM);
 
-	LCDdrawstring(20,0,"PRINCIPAL");
-	LCDdrawstring(0,13,Nokia_Temp);
-	LCDdrawstring(50,13,Nokia_BPM);
-	LCDdrawstring(0,26,info.date);
-	LCDdrawstring(50,26,info.time);
-	
-	LCDdrawline(0, 35, 83, 35, BLACK);
-	// informações
-	LCDdisplay();
+	if (stadoDisplay == 0) {
+		LCDdrawstring(20,0,"PRINCIPAL");
+		LCDdrawstring(0,13,Nokia_Temp);
+		LCDdrawstring(50,13,Nokia_BPM);
+		LCDdrawstring(0,26,info.date);
+		LCDdrawstring(50,26,info.time);
+
+		LCDdrawline(0, 35, 83, 35, BLACK);
+		// informações
+		LCDdisplay();
+	}else{}
 }
 
 void lcdDisplayProfile(){
+	if (stadoDisplay == -1) {
 
+	}else{}
 }
 int lcdDisplaySensors(char *state_BPM, char *state_Temp){
 	char Nokia_Temp[10],Nokia_BPM[10];	
 	snprintf(Nokia_Temp,10,"%.1f*C",Sensors.Temp);
 	snprintf(Nokia_BPM,10,"%dBPM",Sensors.BPM);	
-
-	LCDclear();
-
 	printf("Temp:%.1f\n",Sensors.Temp);
 	printf("BPM:%d\n",Sensors.BPM);
+	if (stadoDisplay==1) {
+
+	LCDclear();
 	LCDdrawstring(20,0,"SENSORES");
 	LCDdrawstring(25,10,Nokia_Temp);
 	LCDdrawstring(20,20,state_Temp);
@@ -93,6 +105,7 @@ int lcdDisplaySensors(char *state_BPM, char *state_Temp){
 	LCDdrawstring(20,40,state_BPM);
 
 	LCDdisplay();
+}else{}
 }
 const unsigned char SERIAL_PORT[2][30] = {"/dev/ttyAMA0","/dev/ttyUSB0"};
 
@@ -142,6 +155,41 @@ int main(void){
 	uint8_t light_State = LOW;
 
 	while(1){
+		
+		
+		  main();
+		  perfil();
+		  sensores();
+
+		  staterBtn = digitalRead(rBtn);
+		  statelBtn = digitalRead(lBtn);
+
+		  if(staterBtn==1 && lastStaterBtn==0)
+		  {
+		      if ( lol != 1){
+
+		       lol = 1;
+		     }
+		     stadoDisplay++;
+		  }
+		  if(statelBtn==1 && lastStatelBtn==0)
+		  {
+		      if ( lol != 1){
+
+		       lol = 1;
+		     }
+		     stadoDisplay--;
+		  }
+
+		lastStaterBtn=staterBtn;
+		lastStateeBtn=stateeBtn;
+		lastStatelBtn=statelBtn;
+
+		}
+		
+		
+		// Código antigo daqui pra baixo 
+		
 		if(GPIORead(changeDisplay) == HIGH){
 			while(GPIORead(changeDisplay) == HIGH){}
 			change_Layer++;
